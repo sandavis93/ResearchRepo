@@ -6,16 +6,22 @@ export default function ServiceRequestPage() {
   const [customerName, setCustomerName] = useState("");
   const [serviceType, setServiceType] = useState("");
   const [description, setDescription] = useState("");
-  const [submittedRequest, setSubmittedRequest] = useState(null);
+  const [submittedRequests, setSubmittedRequests] = useState([]);
 
-  const handleSubmit = (event) => {
+const handleSubmit = (event) => {
   event.preventDefault();
 
-  setSubmittedRequest({
+  const newRequest = {
     customerName: customerName,
     serviceType: serviceType,
     description: description,
-  });
+  };
+
+  setSubmittedRequests([...submittedRequests, newRequest]);
+
+  setCustomerName("");
+  setServiceType("");
+  setDescription("");
 };
 
   return (
@@ -95,24 +101,37 @@ export default function ServiceRequestPage() {
           </button>
 
         </form>
-        {submittedRequest && (
-          <div className="mt-8 border-t pt-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Submitted Request
-        </h2>
+        {submittedRequests.length > 0 && (
+  <div className="mt-8 border-t pt-6">
+    <h2 className="text-2xl font-bold text-gray-800 mb-4">
+      Submitted Requests
+    </h2>
 
-        <p className="mb-2">
-          <strong>Customer:</strong> {submittedRequest.customerName}
-        </p>
+    <div className="space-y-4">
+      {submittedRequests.map((request, index) => (
+        <div
+          key={index}
+          className="border border-gray-200 rounded-md p-4"
+        >
+          <h3 className="font-bold text-lg mb-2">
+            Request #{index + 1}
+          </h3>
 
-        <p className="mb-2">
-          <strong>Service:</strong> {submittedRequest.serviceType}
-        </p>
+          <p className="mb-2">
+            <strong>Customer:</strong> {request.customerName}
+          </p>
 
-        <p>
-          <strong>Description:</strong> {submittedRequest.description}
-        </p>
+          <p className="mb-2">
+            <strong>Service:</strong> {request.serviceType}
+          </p>
+
+          <p>
+            <strong>Description:</strong> {request.description}
+          </p>
         </div>
+      ))}
+      </div>
+    </div>
 )}
       </div>
     </main>
