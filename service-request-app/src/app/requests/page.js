@@ -1,12 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ServiceRequestPage() {
+  const router = useRouter();
+
   const [customerName, setCustomerName] = useState("");
   const [serviceType, setServiceType] = useState("");
   const [description, setDescription] = useState("");
   const [submittedRequests, setSubmittedRequests] = useState([]);
+  const [currentUser, setCurrentUser] = useState("");
+
+  useEffect(() => {
+  const savedUser = localStorage.getItem("currentUser");
+  setCurrentUser(savedUser);
+
+  const savedRequests = localStorage.getItem("serviceRequests");
+
+  if (savedRequests) {
+    setSubmittedRequests(JSON.parse(savedRequests));
+  }
+}, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    router.push("/");
+};
 
 const handleSubmit = (event) => {
   event.preventDefault();
@@ -15,22 +35,36 @@ const handleSubmit = (event) => {
     customerName: customerName,
     serviceType: serviceType,
     description: description,
+    submittedBy: currentUser,
   };
 
-  setSubmittedRequests([...submittedRequests, newRequest]);
+  const updatedRequests = [...submittedRequests, newRequest];
 
-  setCustomerName("");
-  setServiceType("");
-  setDescription("");
+    setSubmittedRequests(updatedRequests);
+    localStorage.setItem("serviceRequests", JSON.stringify(updatedRequests));
+
+    setCustomerName("");
+    setServiceType("");
+    setDescription("");
 };
 
   return (
     <main className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
 
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Service Request
-        </h1>
+        <div className="flex justify-between items-center mb-2">
+  <h1 className="text-3xl font-bold text-gray-800">
+    Service Request
+  </h1>
+
+  <button
+    type="button"
+    onClick={handleLogout}
+    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+  >
+    Logout
+  </button>
+</div>
 
         <p className="text-gray-500 mb-6">
           Enter the customer and service information below.
@@ -124,6 +158,10 @@ const handleSubmit = (event) => {
             <th className="border border-gray-300 p-3 text-left">
               Description
             </th>
+
+            <th className="border border-gray-300 p-3 text-left">
+              Submitted By
+            </th>
           </tr>
         </thead>
 
@@ -141,6 +179,10 @@ const handleSubmit = (event) => {
               <td className="border border-gray-300 p-3">
                 {request.description}
               </td>
+
+              <td className="border border-gray-300 p-3">
+                {request.submittedBy}
+            </td>
             </tr>
           ))}
         </tbody>

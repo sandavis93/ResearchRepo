@@ -25,11 +25,14 @@ export default function Home() {
   const user = users[username];
 
   if (user && user.password === password) {
-    setError("");
-    router.push("/requests");
-  } else {
-    setError("Invalid username or password.");
-  }
+  setError("");
+
+  localStorage.setItem("currentUser", username);
+
+  router.push("/requests");
+} else {
+  setError("Invalid username or password.");
+}
 };
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">
