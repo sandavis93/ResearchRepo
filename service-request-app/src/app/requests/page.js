@@ -24,12 +24,17 @@ export default function ServiceRequestPage() {
 }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    router.push("/");
+  localStorage.removeItem("currentUser");
+  router.push("/");
 };
 
 const handleSubmit = (event) => {
   event.preventDefault();
+
+  if (!customerName || !serviceType || !description) {
+    alert("Please complete all fields before submitting.");
+    return;
+  }
 
   const newRequest = {
     customerName: customerName,
@@ -40,30 +45,52 @@ const handleSubmit = (event) => {
 
   const updatedRequests = [...submittedRequests, newRequest];
 
-    setSubmittedRequests(updatedRequests);
-    localStorage.setItem("serviceRequests", JSON.stringify(updatedRequests));
+  setSubmittedRequests(updatedRequests);
+  localStorage.setItem(
+    "serviceRequests",
+    JSON.stringify(updatedRequests)
+  );
 
-    setCustomerName("");
-    setServiceType("");
-    setDescription("");
+  setCustomerName("");
+  setServiceType("");
+  setDescription("");
 };
 
-  return (
+const handleDelete = (indexToDelete) => {
+  const updatedRequests = submittedRequests.filter(
+    (request, index) => index !== indexToDelete
+  );
+
+  setSubmittedRequests(updatedRequests);
+
+  localStorage.setItem(
+    "serviceRequests",
+    JSON.stringify(updatedRequests)
+  );
+};
+
+return (
     <main className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
 
-        <div className="flex justify-between items-center mb-2">
+  <div className="flex justify-between items-center mb-2">
   <h1 className="text-3xl font-bold text-gray-800">
     Service Request
   </h1>
 
-  <button
-    type="button"
-    onClick={handleLogout}
-    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
-  >
-    Logout
-  </button>
+  <div className="flex items-center gap-4">
+    <span className="text-gray-600">
+      Logged in as: <strong>{currentUser}</strong>
+    </span>
+
+    <button
+      type="button"
+      onClick={handleLogout}
+      className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+    >
+      Logout
+    </button>
+  </div>
 </div>
 
         <p className="text-gray-500 mb-6">
@@ -162,6 +189,10 @@ const handleSubmit = (event) => {
             <th className="border border-gray-300 p-3 text-left">
               Submitted By
             </th>
+
+            <th className="border border-gray-300 p-3 text-left">
+              Action
+            </th>
           </tr>
         </thead>
 
@@ -182,6 +213,16 @@ const handleSubmit = (event) => {
 
               <td className="border border-gray-300 p-3">
                 {request.submittedBy}
+            </td>
+
+            <td className="border border-gray-300 p-3">
+              <button
+                type="button"
+                onClick={() => handleDelete(index)}
+                className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
             </td>
             </tr>
           ))}
