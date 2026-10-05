@@ -103,35 +103,52 @@ const handleSubmit = (event) => {
         </form>
         {submittedRequests.length > 0 && (
   <div className="mt-8 border-t pt-6">
+
     <h2 className="text-2xl font-bold text-gray-800 mb-4">
       Submitted Requests
     </h2>
 
-    <div className="space-y-4">
-      {submittedRequests.map((request, index) => (
-        <div
-          key={index}
-          className="border border-gray-200 rounded-md p-4"
-        >
-          <h3 className="font-bold text-lg mb-2">
-            Request #{index + 1}
-          </h3>
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse border border-gray-300">
 
-          <p className="mb-2">
-            <strong>Customer:</strong> {request.customerName}
-          </p>
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border border-gray-300 p-3 text-left">
+              Customer Name
+            </th>
 
-          <p className="mb-2">
-            <strong>Service:</strong> {request.serviceType}
-          </p>
+            <th className="border border-gray-300 p-3 text-left">
+              Service Request
+            </th>
 
-          <p>
-            <strong>Description:</strong> {request.description}
-          </p>
-        </div>
-      ))}
-      </div>
+            <th className="border border-gray-300 p-3 text-left">
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {submittedRequests.map((request, index) => (
+            <tr key={index}>
+              <td className="border border-gray-300 p-3">
+                {request.customerName}
+              </td>
+
+              <td className="border border-gray-300 p-3">
+                {request.serviceType}
+              </td>
+
+              <td className="border border-gray-300 p-3">
+                {request.description}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+
+      </table>
     </div>
+
+  </div>
 )}
       </div>
     </main>
