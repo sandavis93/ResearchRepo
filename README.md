@@ -10,6 +10,7 @@ This project was created as part of a capstone research milestone to explore tec
 - React
 - JavaScript
 - Tailwind CSS
+- Spring Boot
 - npm
 - Git/GitHub
 
