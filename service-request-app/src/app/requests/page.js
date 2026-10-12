@@ -12,23 +12,37 @@ export default function ServiceRequestPage() {
   const [submittedRequests, setSubmittedRequests] = useState([]);
   const [currentUser, setCurrentUser] = useState("");
 
-  useEffect(() => {
+  
+useEffect(() => {
   const savedUser = localStorage.getItem("currentUser");
   setCurrentUser(savedUser);
 
-  const savedRequests = localStorage.getItem("serviceRequests");
+  const loadRequests = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/requests");
 
-  if (savedRequests) {
-    setSubmittedRequests(JSON.parse(savedRequests));
-  }
+      if (!response.ok) {
+        throw new Error("Failed to load requests");
+      }
+
+      const data = await response.json();
+      setSubmittedRequests(data);
+    } catch (error) {
+      console.error("Error loading requests:", error);
+    }
+  };
+
+  loadRequests();
 }, []);
+
 
   const handleLogout = () => {
   localStorage.removeItem("currentUser");
   router.push("/");
 };
 
-const handleSubmit = (event) => {
+
+const handleSubmit = async (event) => {
   event.preventDefault();
 
   if (!customerName || !serviceType || !description) {
@@ -43,30 +57,58 @@ const handleSubmit = (event) => {
     submittedBy: currentUser,
   };
 
-  const updatedRequests = [...submittedRequests, newRequest];
+  try {
+    const response = await fetch("http://localhost:8080/api/requests", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newRequest),
+    });
 
-  setSubmittedRequests(updatedRequests);
-  localStorage.setItem(
-    "serviceRequests",
-    JSON.stringify(updatedRequests)
-  );
+    if (!response.ok) {
+      throw new Error("Failed to submit request");
+    }
 
-  setCustomerName("");
-  setServiceType("");
-  setDescription("");
+    const savedRequest = await response.json();
+
+    setSubmittedRequests((previousRequests) => [
+      ...previousRequests,
+      savedRequest,
+    ]);
+
+    setCustomerName("");
+    setServiceType("");
+    setDescription("");
+  } catch (error) {
+    console.error("Error submitting request:", error);
+    alert("Could not submit request. Make sure Spring Boot is running.");
+  }
 };
 
-const handleDelete = (indexToDelete) => {
-  const updatedRequests = submittedRequests.filter(
-    (request, index) => index !== indexToDelete
-  );
 
-  setSubmittedRequests(updatedRequests);
+const handleDelete = async (indexToDelete) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/requests/${indexToDelete}`,
+      {
+        method: "DELETE",
+      }
+    );
 
-  localStorage.setItem(
-    "serviceRequests",
-    JSON.stringify(updatedRequests)
-  );
+    if (!response.ok) {
+      throw new Error("Failed to delete request");
+    }
+
+    const updatedRequests = submittedRequests.filter(
+      (request, index) => index !== indexToDelete
+    );
+
+    setSubmittedRequests(updatedRequests);
+  } catch (error) {
+    console.error("Error deleting request:", error);
+    alert("Could not delete request. Make sure Spring Boot is running.");
+  }
 };
 
 return (

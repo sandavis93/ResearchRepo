@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/requests")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ServiceRequestController {
+
 
     private final List<Map<String, String>> requests = new ArrayList<>();
 
@@ -25,4 +27,11 @@ public class ServiceRequestController {
         requests.add(request);
         return request;
     }
+    
+    @DeleteMapping("/{index}")
+    public void deleteRequest(@PathVariable int index) {
+        if (index >= 0 && index < requests.size()) {
+            requests.remove(index);
+    }
+    }   
 }
