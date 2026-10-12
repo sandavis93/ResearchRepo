@@ -19,5 +19,35 @@ The purpose of this project was to gain hands-on experience with the selected de
 
 ## Running the Project
 
-Install dependencies:
+Requirements
+
+Node.js and npm
+
+Java JDK 24
+
+Git
+
+1. Run the Backend (Spring Boot)
+
+Open a terminal in the project folder and run:
+
+cd backend
+.\mvnw.cmd spring-boot:run
+
+The backend runs at http://localhost:8080.
+
+2. Run the Frontend (Next.js)
+
+Open a second terminal in the project folder and run:
+
+cd service-request-app
 npm install
+npm run dev
+
+The frontend runs at http://localhost:3000.
+
+3. Open the Application
+
+Visit http://localhost:3000 in your browser.
+
+Both the frontend and backend must be running for the application to work correctly.
